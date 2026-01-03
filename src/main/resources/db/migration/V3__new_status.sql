@@ -1,0 +1,1 @@
+INSERT INTO mercury.status (name) VALUES ('OUT_OF_STOCK');

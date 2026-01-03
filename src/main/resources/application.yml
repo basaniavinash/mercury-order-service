@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: mercury-order-service
+
+  datasource:
+    username: catalog_service
+    password: catalogpass
+    driver.class-name: or.postgresql.Driver
+
+  flyway:
+    table: flyway_orders_history
+    schemas: mercury
+    default-schema: mercury
+    enabled: true
+    baseline-on-migrate: true
+    user: flyway_user
+    password: flywaypass
+    locations: classpath:db/migration
+
+logging:
+  level:
+    root: INFO
+    org.springframework.boot.context.config: INFO
+    org.springframework.core.env: INFO
+    org.flywaydb: INFO
+    org.springframework.boot.autoconfigure.flyway: INFO
+    com.zaxxer.hikari: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus,info
