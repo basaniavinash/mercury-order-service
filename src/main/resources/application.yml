@@ -3,25 +3,24 @@ spring:
     name: mercury-order-service
 
   datasource:
-    username: catalog_service
-    password: catalogpass
-    driver.class-name: or.postgresql.Driver
+    username: order_service
+    password: orderpass
+    driver-class-name: org.postgresql.Driver
 
   flyway:
-    table: flyway_orders_history
-    schemas: mercury
-    default-schema: mercury
     enabled: true
-    baseline-on-migrate: true
     user: flyway_user
     password: flywaypass
-    locations: classpath:db/migration
+    schemas: mercury
+    default-schema: mercury
+    table: flyway_orders_history
+    baseline-on-migrate: true
+    # IMPORTANT: orders should only see orders migrations
+    locations: classpath:db/migration/orders
 
 logging:
   level:
     root: INFO
-    org.springframework.boot.context.config: INFO
-    org.springframework.core.env: INFO
     org.flywaydb: INFO
     org.springframework.boot.autoconfigure.flyway: INFO
     com.zaxxer.hikari: INFO
@@ -30,4 +29,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,metrics,prometheus,info
+        include: health,info,prometheus,metrics
+  metrics:
+    tags:
+      application: ${spring.application.name}
