@@ -25,4 +25,9 @@ public class OrderController {
     public List<Order> getAllOrders(){
         return orderService.getAllOrders();
     }
+
+    @GetMapping(value = "/{id}")
+    public Order getOrderById(@PathVariable BigInteger id){
+        return orderService.getOrderById(id);
+    }
 }

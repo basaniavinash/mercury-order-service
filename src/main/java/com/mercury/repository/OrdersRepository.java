@@ -74,4 +74,13 @@ public class OrdersRepository {
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> mapOrder(rs));
     }
+
+    public Order getOrderById(BigInteger id){
+        String sql = """
+                    select id, user_id, status, subtotal_amount, discount_amount, tax_amount, total_amount, created_at, modified_at
+                    FROM mercury.orders WHERE id=?;
+                """;
+
+        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> mapOrder(rs), id);
+    }
 }

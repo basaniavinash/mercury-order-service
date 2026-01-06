@@ -31,5 +31,11 @@ management:
       exposure:
         include: health,info,prometheus,metrics
   metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      # optional but recommended:
+      slo:
+        http.server.requests: 50ms,100ms,200ms,300ms,500ms,1s,2s,5s
     tags:
       application: ${spring.application.name}

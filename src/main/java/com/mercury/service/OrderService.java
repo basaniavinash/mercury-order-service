@@ -50,4 +50,8 @@ public class OrderService {
     public List<Order> getAllOrders(){
         return ordersRepository.getAllOrders();
     }
+
+    public Order getOrderById(BigInteger id){
+        return ordersRepository.getOrderById(id);
+    }
 }
