@@ -6,6 +6,20 @@ spring:
     username: order_service
     password: orderpass
     driver-class-name: org.postgresql.Driver
+    hikari:
+      # --- Pool sizing ---
+      maximum-pool-size: 10        # hard cap: only 10 DB connections in-flight
+      minimum-idle: 2              # keep a couple warm
+      idle-timeout: 30000          # ms; how long an idle connection can sit
+      max-lifetime: 1800000        # ms; retire connections before PG/network does
+      keepalive-time: 0            # off (fine for local)
+
+      # --- Backpressure / fail-fast knob (THIS is the big one) ---
+      connection-timeout: 300      # ms; how long a request may wait for a DB conn
+
+      # --- Optional safety ---
+      validation-timeout: 1000     # ms; don’t spend forever validating conns
+      leak-detection-threshold: 0  # keep 0 for now (turn on later if debugging leaks)
 
   flyway:
     enabled: true
@@ -17,6 +31,30 @@ spring:
     baseline-on-migrate: true
     # IMPORTANT: orders should only see orders migrations
     locations: classpath:db/migration/orders
+
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+
+    consumer:
+      group-id: mercury-order-service
+      auto-offset-reset: earliest
+      idempotency: true
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.use.type.headers: false
+server:
+  tomcat:
+    threads:
+      max: 100                     # request execution concurrency
+      min-spare: 10
+    accept-count: 100              # queue length when all threads are busy
+    connection-timeout: 5s         # how long to wait for request data on new conn
 
 logging:
   level:
@@ -39,3 +77,14 @@ management:
         http.server.requests: 50ms,100ms,200ms,300ms,500ms,1s,2s,5s
     tags:
       application: ${spring.application.name}
+
+mercury:
+  schemas:
+    orderCreated: /schemas/order-created.v1.schema.json
+    inventoryReserved: /schemas/inventory-reserved.v1.schema.json
+    inventoryRejected: /schemas/inventory-rejected.v1.schema.json
+  kafka:
+    topics:
+      order-created-topic: orders.order-created.v1
+      inventory-reserved-topic: inventory.inventory-reserved.v1
+      inventory-rejected-topic: inventory.inventory-rejected.v1

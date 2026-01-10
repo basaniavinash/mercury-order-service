@@ -1,5 +1,6 @@
 package com.mercury.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mercury.model.Order;
 import com.mercury.service.OrderService;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,13 @@ public class OrderController {
     }
 
     @PostMapping
-    public BigInteger createOrder(@RequestBody Order order){
+    public BigInteger createOrder(@RequestBody Order order) throws JsonProcessingException {
         return orderService.createOrder(order);
+    }
+
+    @PostMapping(value = "/timeout")
+    public BigInteger createOrderTimeout(@RequestBody Order order){
+        return orderService.createOrderTimeout(order);
     }
 
     @GetMapping

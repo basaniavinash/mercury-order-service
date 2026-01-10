@@ -3,3 +3,5 @@ server:
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/mercury
+  kafka:
+    bootstrap-servers: localhost:9092

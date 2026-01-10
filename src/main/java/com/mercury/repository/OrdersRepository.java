@@ -66,6 +66,11 @@ public class OrdersRepository {
         jdbcTemplate.update(sql, status.name(), orderId.longValue());
     }
 
+    public void updateStatusTimeout(BigInteger orderId, OrderStatus status){
+        String sql = "UPDATE mercury.orders SET status = ? WHERE id = ? AND pg_sleep(6) is NULL";
+        jdbcTemplate.update(sql, status.name(), orderId.longValue());
+    }
+
     public List<Order> getAllOrders(){
         String sql = """
                     select id, user_id, status, subtotal_amount, discount_amount, tax_amount, total_amount, created_at, modified_at

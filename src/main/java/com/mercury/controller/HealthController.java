@@ -11,4 +11,10 @@ public class HealthController {
     public String healthCheck(){
         return "UP";
     }
+
+    @GetMapping("/timeout")
+    public String getHealthWithTimeout() throws InterruptedException {
+        Thread.sleep(8000);
+        return "Failed";
+    }
 }
