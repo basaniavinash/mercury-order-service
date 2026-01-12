@@ -2,7 +2,7 @@
 <configuration>
 
     <springProperty name="ACTIVE_PROFILE" source="spring.profiles.active" defaultValue="unknown"/>
-    <springProperty name="APP_NAME" source="spring.application.name" defaultValue="mercury-catalog-service"/>
+    <springProperty name="APP_NAME" source="spring.application.name" defaultValue="mercury-order-service"/>
 
     <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">

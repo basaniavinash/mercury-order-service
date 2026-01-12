@@ -23,7 +23,7 @@ public record OrderCreatedEvent(
         String userId,
         double totalAmount,
         String currency,
-        List<OrderItem> items
+        List<OrderCreatedEventItem> items
 ) {
     public record Item(
             String sku,

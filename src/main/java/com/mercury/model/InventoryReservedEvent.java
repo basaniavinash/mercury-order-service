@@ -17,6 +17,8 @@ public record InventoryReservedEvent(
         String eventType,
         String schemaVersion,
 
+        String reservationId,
+
         String orderId,
         List<Item> items
 ) {

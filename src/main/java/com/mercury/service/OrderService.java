@@ -50,6 +50,7 @@ public class OrderService {
 
         // 2) create order row -> get id
         BigInteger orderId = ordersRepository.createOrder(order);
+        order.setId(orderId);
 
         // 3) set orderId on items
         order.getItems().forEach(i -> i.setOrderId(orderId));
@@ -57,7 +58,7 @@ public class OrderService {
         // 4) reserve stock (throws if not enough)
         inventoryRepository.reserveStock(order.getItems());
 
-        outBoxEventsRepository.createOutboxEvent(buildInventoryReservedOutboxEvent(order));
+        /*outBoxEventsRepository.createOutboxEvent(buildInventoryReservedOutboxEvent(order));*/
 
         // 5) insert order_items
         orderItemsRepository.insertOrderItems(order.getItems());
@@ -79,7 +80,9 @@ public class OrderService {
                 .producedAt(Instant.now())
                 .schemaVersion("v1")
                 .currency("USD")
-                .items(order.getItems())
+                .items(order.getItems().stream()
+                        .map(i -> new OrderCreatedEventItem(i.getSku(), i.getQty(), i.getUnitPrice()))
+                        .toList())
                 .totalAmount(order.getTotalAmount().doubleValue())
                 .userId(String.valueOf(order.getUserId()))
                 .build();
@@ -92,10 +95,11 @@ public class OrderService {
                 .build();
     }
 
-    private OutboxEvent buildInventoryReservedOutboxEvent(Order order) throws JsonProcessingException {
+    /*private OutboxEvent buildInventoryReservedOutboxEvent(Order order) throws JsonProcessingException {
         var evt = InventoryReservedEvent.builder()
                 .orderId(String.valueOf(order.getId()))
                 .eventId(String.valueOf(UUID.randomUUID()))
+                .reservationId(String.valueOf(UUID.randomUUID()))
                 .correlationId(String.valueOf(UUID.randomUUID()))
                 .eventType(EventType.INVENTORY_RESERVED.name())
                 .producedAt(Instant.now())
@@ -115,7 +119,7 @@ public class OrderService {
                 .payload(objectMapper.writeValueAsString(evt))
                 .status(OutBoxStatus.PENDING.name())
                 .build();
-    }
+    }*/
 
     @Transactional(timeout = 5)
     public BigInteger createOrderTimeout(Order order){
@@ -124,6 +128,7 @@ public class OrderService {
 
         // 2) create order row -> get id
         BigInteger orderId = ordersRepository.createOrder(order);
+        order.setId(orderId);
 
         // 3) set orderId on items
         order.getItems().forEach(i -> i.setOrderId(orderId));
